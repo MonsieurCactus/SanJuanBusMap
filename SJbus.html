@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>San Juan, Puerto Rico BUS MAP</title>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.3/mapbox.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.3/mapbox.css' rel='stylesheet' />	
+    
+  	<style type='text/css'>
+    		#map { height: 300px; width:625px; }
+		td { width:150px; }
+		th { width:150px; }
+		div#route {width:152px; background-color:#F0F0F0;}
+		div.leaflet-control-layers-overlays { width:100px; }
+		label {		width:33%; 
+					background-color:#CCFF99;    
+					float: left; 
+				}
+	</style>
+  
+
+<script type='text/javascript'>//<![CDATA[ 
+window.onload=function(){
+
+	$.ajax({
+	  dataType: "json",
+	  url: 'https://dl.dropboxusercontent.com/u/17949100/OGP/ama.json',
+	  success: success
+	});
+
+	function success(data){
+		rtes = [];
+		for(j = 0; j < data.length; j++){
+			pts = data[j]['geometry']['coordinates'];
+			points = [];
+			for(i = 0; i < pts.length; i++){
+				points.push( [pts[i][1], pts[i][0]])
+			}
+			rtes.push({ "name": data[j]['properties']['Name'], "path":points});
+		}
+
+		id = 'mrcactu5.ibohil52';
+
+		var mapboxUrl = 'https://{s}.tiles.mapbox.com/v3/'+ id  +  '/{z}/{x}/{y}.png';
+
+		var mapboxTiles = L.tileLayer( mapboxUrl , {
+			attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
+		});
+
+		var map = L.map('map')
+    			.addLayer(mapboxTiles)
+    			.setView([18.43, -66.05], 12);
+
+
+
+		colors = ["red", "blue", "green"];
+		routes = {};
+		for(i = 0; i < rtes.length; i++){
+			routes[rtes[i]['name']] = L.polyline(
+					rtes[i]['path'], { color: colors[Math.floor(Math.random()*colors.length)] }
+				);	
+		}
+
+		AMAroutes = L.layerGroup( routes  ).addTo(map);
+		L.control.layers( null, routes ).addTo(map);
+		
+		buses = $('.leaflet-control-layers-overlays').children("label")
+
+	}
+}//]]>  
+
+</script>
+</head>
+<body>
+<h1>Welcome to San Juan Puerto Rico!</h1>
+<p>Use the menu on the right side, to select the route your interested in.</p>
+<div id="map"></div></body>
+</html>
+
+
