@@ -30,7 +30,7 @@
 						.addLayer(mapboxTiles)
 						.setView([18.455, -66.07], 14);
 
-				busPath = new L.polyline( rtes["21"]['geometry']['coordinates'].map(swap), { color: "green" } );
+				busPath = new L.polyline( rtes["21"]['geometry']['coordinates'].map(swap), { color: "red" } );
 				busPath.addTo(map);
 
 			}
